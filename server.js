@@ -1,41 +1,40 @@
 import express from 'express';
+import { readFile, writeFile } from 'fs/promises';
 
 const app = express();
 app.set("view engine", "ejs");
 app.use(express.static('public'));
 app.use(express.json());
+
 const PORT = process.env.PORT || 3000;
-const entries = [
-  { title: 'First note', body: 'Notes from the first session.' },
-  { title: 'Second note', body: 'Notes from the second session.' },
-  { title: 'Third note', body: 'Notes from the third session.' },
-];
+
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 app.get('/', (req, res) => {
-  res.send('Hello, web!');
+  res.status(200).send('Hello, web!');
 });
 
 app.get('/hello', (req, res) => {
-  res.send('Learning how the web actually works, one route at a time.');
+  res.status(200).send('Learning how the web actually works, one route at a time.');
 });
 
 app.get('/hello/:name', (req, res) => {
-  res.send(`Hello, ${req.params.name}!`);
+  res.status(200).send(`Hello, ${req.params.name}!`);
 });
 
 app.get('/repeat/:word', (req, res) => {
   const word = req.params.word;
-  res.send(`${word} ${word} ${word}`);
+  res.status(200).send(`${word} ${word} ${word}`);
 });
 
 app.get('/count', (req, res) => {
   const from = req.query.from || 1;
   const to = req.query.to || 10;
-  res.send(`Counting from ${from} to ${to}.`);
+  res.status(200).send(`Counting from ${from} to ${to}.`);
 });
 
 app.get('/api/info', (req, res) => {
-  res.json({ course: 'COMPSCI 326', topic: 'Web Programming' });
+  res.status(200).json({ course: 'COMPSCI 326', topic: 'Web Programming' });
 });
 
 app.get('/api/error', (req, res) => {
@@ -43,37 +42,62 @@ app.get('/api/error', (req, res) => {
 });
 
 app.get('/status', (req, res) => {
-  res.json({ status: 'ok', uptime: process.uptime() });
+  res.status(200).json({ status: 'ok', uptime: process.uptime() });
 });
 
 app.get("/about", (req, res) => {
-  res.render("about", { title: "About" });
+  res.status(200).render("about", { title: "About" });
 });
 
-
-app.get('/entries', (req, res) => {
-  res.render('entries', { title: 'My Notes', entries });
+app.get('/entries', async (req, res) => {
+  const data = await readFile('entries.json', 'utf-8');
+  const entries = JSON.parse(data);
+  res.set('Cache-Control', 'public, max-age=60');
+  res.set('X-Total-Count', entries.length);
+  res.status(200).render('entries', { title: 'My Notes', entries });
 });
 
-app.post('/entries', (req, res) => {
+app.post('/entries', async (req, res) => {
   const { title, body } = req.body;
   if (!title || !body) {
     res.status(400).json({ error: 'title and body are required' });
     return;
   }
+  const data = await readFile('entries.json', 'utf-8');
+  const entries = JSON.parse(data);
   const newEntry = { title, body };
   entries.push(newEntry);
+  await writeFile('entries.json', JSON.stringify(entries, null, 2));
   res.status(201).json(newEntry);
 });
 
-app.delete('/entries/:id', (req, res) => {
+app.delete('/entries/:id', async (req, res) => {
   const id = parseInt(req.params.id);
+  const data = await readFile('entries.json', 'utf-8');
+  const entries = JSON.parse(data);
   if (id < 0 || id >= entries.length) {
     res.status(404).json({ error: 'Entry not found' });
     return;
   }
   entries.splice(id, 1);
+  await writeFile('entries.json', JSON.stringify(entries, null, 2));
   res.status(204).send();
+});
+
+app.get('/slow', async (req, res) => {
+  await wait(5000);
+  res.status(200).send('Done waiting.');
+});
+
+app.get('/three-posts', async (req, res) => {
+  const ids = [1, 2, 3];
+  const titles = [];
+  for (const id of ids) {
+    const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
+    const post = await response.json();
+    titles.push(post.title);
+  }
+  res.status(200).json({ titles });
 });
 
 app.use((req, res) => {
