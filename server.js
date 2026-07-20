@@ -1,14 +1,11 @@
 import express from 'express';
 
 const app = express();
+app.set("view engine", "ejs");
 const PORT = process.env.PORT || 3000;
 
 app.get('/', (req, res) => {
   res.send('Hello, web!');
-});
-
-app.get('/about', (req, res) => {
-  res.send('This is a web programming course.');
 });
 
 app.get('/hello', (req, res) => {
@@ -40,6 +37,10 @@ app.get('/api/error', (req, res) => {
 
 app.get('/status', (req, res) => {
   res.json({ status: 'ok', uptime: process.uptime() });
+});
+
+app.get("/about", (req, res) => {
+  res.render("about", { title: "About" });
 });
 
 app.use((req, res) => {
