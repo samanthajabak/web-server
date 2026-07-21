@@ -1,9 +1,9 @@
 import express from 'express';
-import { readFile, writeFile } from 'fs/promises';
+import morgan from 'morgan';
+import entriesRouter from './routes/entries.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const DATA_FILE = 'entries.json';
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -11,6 +11,13 @@ app.set('views', 'views');
 app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
+app.use(morgan('dev'));
 
 app.get('/', (req, res) => {
   res.status(200).send('Hello, web!');
@@ -51,53 +58,7 @@ app.get("/about", (req, res) => {
   res.status(200).render("about", { title: "About" });
 });
 
-app.get('/entries', async (req, res) => {
-  const data = await readFile(DATA_FILE, 'utf-8');
-  const entries = JSON.parse(data);
-  res.set('Cache-Control', 'public, max-age=60');
-  res.set('X-Total-Count', entries.length);
-  res.status(200).render('entries', { title: 'My Notes', entries });
-});
-
-app.post('/entries', async (req, res) => {
-  const { title, body } = req.body;
-  if (!title || !body) {
-    res.status(400).json({ error: 'title and body are required' });
-    return;
-  }
-  const data = await readFile(DATA_FILE, 'utf-8');
-  const entries = JSON.parse(data);
-  const newEntry = { title, body };
-  entries.push(newEntry);
-  await writeFile(DATA_FILE, JSON.stringify(entries, null, 2));
-  res.status(201).json(newEntry);
-});
-
-app.post('/entries/classic', async (req, res) => {
-  const { title, body } = req.body;
-  if (!title || !body) {
-    res.status(400).send('title and body are required');
-    return;
-  }
-  const data = await readFile(DATA_FILE, 'utf-8');
-  const entries = JSON.parse(data);
-  entries.push({ title, body });
-  await writeFile(DATA_FILE, JSON.stringify(entries, null, 2));
-  res.redirect('/entries');
-});
-
-app.delete('/entries/:id', async (req, res) => {
-  const id = parseInt(req.params.id);
-  const data = await readFile(DATA_FILE, 'utf-8');
-  const entries = JSON.parse(data);
-  if (id < 0 || id >= entries.length) {
-    res.status(404).json({ error: 'Entry not found' });
-    return;
-  }
-  entries.splice(id, 1);
-  await writeFile(DATA_FILE, JSON.stringify(entries, null, 2));
-  res.status(204).send();
-});
+app.use('/entries', entriesRouter);
 
 app.get('/slow', async (req, res) => {
   await new Promise((resolve) => setTimeout(resolve, 5000));
