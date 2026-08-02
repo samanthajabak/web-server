@@ -7,7 +7,10 @@ const validateEntry = ({ title, body }) => {
   return Ok({ title, body });
 };
 
-export const listEntries = async () => (await getAll()).map(toEntryDto);
+export const listEntries = async () =>
+  (await getAll())
+    .sort((a, b) => a.title.localeCompare(b.title))
+    .map(toEntryDto);
 
 export const createEntry = async (data) => {
   const result = validateEntry(data);
