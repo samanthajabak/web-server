@@ -7,18 +7,18 @@
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
   </head>
   <body>
-    <header class="site-header">
-      <h1>Notes</h1>
-      <nav>
-        <a href="/">Home</a>
-        <a href="/entries">Entries</a>
+    <header class="flex flex-col gap-2 border-b-2 border-gray-300 pb-2 mb-4 sm:flex-row sm:justify-between sm:items-center">
+      <h1 class="text-xl font-bold">Notes</h1>
+      <nav class="flex gap-4">
+        <a href="/" class="text-teal-700">Home</a>
+        <a href="/entries" class="text-teal-700">Entries</a>
       </nav>
     </header>
     <main>
-      <form id="entry-form">
-        <input type="text" name="title" placeholder="Title">
-        <input type="text" name="body" placeholder="Body">
-        <button type="submit">Add entry</button>
+      <form id="entry-form" class="flex flex-col gap-2 mb-6 sm:flex-row">
+        <input type="text" name="title" placeholder="Title" class="form-input">
+        <input type="text" name="body" placeholder="Body" class="form-input">
+        <button type="submit" class="bg-teal-700 text-white rounded px-4 py-2 hover:bg-teal-800">Add entry</button>
       </form>
       <ul id="entries">
         <% entries.forEach((entry) => { %>
@@ -26,15 +26,15 @@
             <span class="entry-display"><strong><%= entry.title %>:</strong> <%= entry.body %></span>
             <button class="favorite-btn" type="button"><%= entry.favorite ? '★' : '☆' %></button>
             <button class="edit-btn" type="button">Edit</button>
-              <button
-                class="delete-btn"
-                hx-delete="/entries/<%= entry.id %>"
-                hx-target="closest li"
-                hx-swap="outerHTML"
-                hx-confirm="Delete this entry?"
-                hx-indicator="closest li .delete-indicator"
-              >Delete</button>
-              <span class="delete-indicator htmx-indicator">Deleting...</span>
+            <button
+              class="delete-btn"
+              hx-delete="/entries/<%= entry.id %>"
+              hx-target="closest li"
+              hx-swap="outerHTML"
+              hx-confirm="Delete this entry?"
+              hx-indicator="closest li .delete-indicator"
+            >Delete</button>
+            <span class="delete-indicator htmx-indicator">Deleting...</span>
           </li>
         <% }); %>
       </ul>

@@ -4,7 +4,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/.bin/jest"
+    "test": "node --experimental-vm-modules node_modules/.bin/jest",
+    "build:css": "tailwindcss -i ./src/input.css -o ./public/style.css"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +18,8 @@
     "morgan": "^1.11.0"
   },
   "devDependencies": {
-    "jest": "^30.4.2"
+    "jest": "^30.4.2",
+    "tailwindcss": "^4.1.0",
+    "@tailwindcss/cli": "^4.1.0"
   }
 }
