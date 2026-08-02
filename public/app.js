@@ -26,7 +26,9 @@ form.addEventListener('submit', async (event) => {
   item.dataset.title = saved.title;
   item.dataset.body = saved.body;
   item.dataset.favorite = saved.favorite;
-  item.innerHTML = `<span class="entry-display"><strong>${saved.title}:</strong> ${saved.body}</span><button class="favorite-btn" type="button">☆</button><button class="edit-btn" type="button">Edit</button><button class="delete-btn" type="button">Delete</button>`;
+  item.innerHTML = `<span class="entry-display"><strong>${saved.title}:</strong> ${saved.body}</span><button class="favorite-btn" type="button">☆</button><button class="edit-btn" type="button">Edit</button><button class="delete-btn" hx-delete="/entries/${saved.id}" hx-target="closest li" hx-swap="outerHTML" hx-confirm="Delete this entry?">Delete</button>`;
+  list.append(item);
+  htmx.process(item);
   list.append(item);
 
   form.reset();
@@ -99,17 +101,5 @@ list.addEventListener('click', async (event) => {
     return;
   }
 
-  if (!event.target.matches('.delete-btn')) return;
 
-  const button = event.target;
-  const item = button.closest('li');
-  const id = item.dataset.id;
-
-  button.disabled = true;
-  try {
-    await fetch(`/entries/${id}`, { method: 'DELETE' });
-    item.remove();
-  } catch {
-    button.disabled = false;
-  }
 });

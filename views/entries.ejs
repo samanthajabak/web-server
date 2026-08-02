@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title><%= title %></title>
     <link rel="stylesheet" href="/style.css">
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
   </head>
   <body>
     <header class="site-header">
@@ -25,9 +26,16 @@
             <span class="entry-display"><strong><%= entry.title %>:</strong> <%= entry.body %></span>
             <button class="favorite-btn" type="button"><%= entry.favorite ? '★' : '☆' %></button>
             <button class="edit-btn" type="button">Edit</button>
-            <button class="delete-btn" type="button">Delete</button>
+            <button
+              class="delete-btn"
+              hx-delete="/entries/<%= entry.id %>"
+              hx-target="closest li"
+              hx-swap="outerHTML"
+              hx-confirm="Delete this entry?"
+            >Delete</button>
           </li>
         <% }); %>
+      </ul>
 
       <section class="classic-form">
         <h2>Classic form (no JavaScript)</h2>
