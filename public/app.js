@@ -22,7 +22,7 @@ form.addEventListener('submit', async (event) => {
   const saved = await response.json();
 
   const item = document.createElement('li');
-  item.dataset.id = list.children.length;
+  item.dataset.id = saved.id;
   item.dataset.title = saved.title;
   item.dataset.body = saved.body;
   item.innerHTML = `<span class="entry-display"><strong>${saved.title}:</strong> ${saved.body}</span><button class="edit-btn" type="button">Edit</button><button class="delete-btn" type="button">Delete</button>`;
