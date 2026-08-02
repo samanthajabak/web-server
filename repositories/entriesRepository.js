@@ -4,6 +4,7 @@ const entrySchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     body: { type: String, required: true },
+    favorite: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
@@ -20,6 +21,14 @@ export const create = async (data) => (await Entry.create(data)).toObject();
 
 export const updateById = async (id, data) =>
   Entry.findByIdAndUpdate(id, data, { new: true }).lean();
+
+export const toggleFavorite = async (id) => {
+  const entry = await Entry.findById(id);
+  if (!entry) return null;
+  entry.favorite = !entry.favorite;
+  await entry.save();
+  return entry.toObject();
+};
 
 export const removeById = async (id) => {
   await Entry.findByIdAndDelete(id);

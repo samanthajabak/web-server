@@ -8,5 +8,5 @@ router.post('/', entriesController.create);
 router.post('/classic', entriesController.createClassic);
 router.put('/:id', entriesController.update);
 router.delete('/:id', entriesController.destroy);
-
+router.patch('/:id/favorite', entriesController.favorite);
 export default router;
