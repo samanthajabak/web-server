@@ -1,6 +1,11 @@
 import express from 'express';
 import morgan from 'morgan';
 import entriesRouter from './routes/entries.js';
+import mongoose from 'mongoose';
+
+await mongoose.connect(
+  process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/devdb'
+);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
