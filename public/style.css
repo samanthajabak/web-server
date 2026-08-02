@@ -146,3 +146,11 @@ li {
   color: white;
   cursor: pointer;
 }
+
+.htmx-indicator {
+  opacity: 0;
+  transition: opacity 200ms ease-in;
+}
+.htmx-indicator.htmx-request {
+  opacity: 1;
+}

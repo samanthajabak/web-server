@@ -26,13 +26,15 @@
             <span class="entry-display"><strong><%= entry.title %>:</strong> <%= entry.body %></span>
             <button class="favorite-btn" type="button"><%= entry.favorite ? '★' : '☆' %></button>
             <button class="edit-btn" type="button">Edit</button>
-            <button
-              class="delete-btn"
-              hx-delete="/entries/<%= entry.id %>"
-              hx-target="closest li"
-              hx-swap="outerHTML"
-              hx-confirm="Delete this entry?"
-            >Delete</button>
+              <button
+                class="delete-btn"
+                hx-delete="/entries/<%= entry.id %>"
+                hx-target="closest li"
+                hx-swap="outerHTML"
+                hx-confirm="Delete this entry?"
+                hx-indicator="closest li .delete-indicator"
+              >Delete</button>
+              <span class="delete-indicator htmx-indicator">Deleting...</span>
           </li>
         <% }); %>
       </ul>
