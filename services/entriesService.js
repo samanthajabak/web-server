@@ -1,6 +1,6 @@
 import { Ok, Err } from '../result.js';
-import { getAll, findById, create, updateById, removeById } from '../repositories/entriesRepository.js';
 import { toEntryDto } from '../dtos/entryDto.js';
+import { getAll, findById, create, updateById, removeById, toggleFavorite } from '../repositories/entriesRepository.js';
 
 const validateEntry = ({ title, body }) => {
   if (!title || !body) return Err({ status: 400, message: 'title and body are required' });
@@ -18,10 +18,15 @@ export const createEntry = async (data) => {
 export const updateEntry = async (id, data) => {
   const existing = await findById(id);
   if (!existing) return Err({ status: 404, message: 'Entry not found' });
-
   const result = validateEntry(data);
   if (!result.ok) return result;
   return Ok(toEntryDto(await updateById(id, result.value)));
+};
+
+export const toggleEntryFavorite = async (id) => {
+  const existing = await findById(id);
+  if (!existing) return Err({ status: 404, message: 'Entry not found' });
+  return Ok(toEntryDto(await toggleFavorite(id)));
 };
 
 export const deleteEntry = async (id) => {
