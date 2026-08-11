@@ -105,3 +105,4 @@ app.listen(PORT, () => {
 // checkpoint 4
 // checkpoint 5
 // stable checkpoint
+// hotfix: correct the startup log message
