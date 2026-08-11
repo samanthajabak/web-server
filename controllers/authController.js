@@ -20,7 +20,11 @@ export const login = async (req, res) => {
   }
 
   const sessionId = createSession(result.value._id.toString());
-  res.cookie('sessionId', sessionId, { signed: true, httpOnly: true });
+  const cookieOptions = { signed: true, httpOnly: true };
+  if (req.body.rememberMe) {
+    cookieOptions.maxAge = 30 * 24 * 60 * 60 * 1000;
+  }
+  res.cookie('sessionId', sessionId, cookieOptions);
   res.status(200).json({ loggedIn: true });
 };
 
