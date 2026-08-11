@@ -1,5 +1,11 @@
 const form = document.querySelector('#entry-form');
 const list = document.querySelector('#entries');
+const announcer = document.querySelector('#status-announcer');
+
+list.addEventListener('htmx:beforeSwap', () => {
+  announcer.textContent = 'Entry deleted.';
+  list.focus();
+});
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -26,7 +32,7 @@ form.addEventListener('submit', async (event) => {
   item.dataset.title = saved.title;
   item.dataset.body = saved.body;
   item.dataset.favorite = saved.favorite;
-  item.innerHTML = `<span class="entry-display"><strong>${saved.title}:</strong> ${saved.body}</span><button class="favorite-btn" type="button">☆</button><button class="edit-btn" type="button">Edit</button><button class="delete-btn" hx-delete="/entries/${saved.id}" hx-target="closest li" hx-swap="outerHTML" hx-confirm="Delete this entry?" hx-indicator="closest li .delete-indicator">Delete</button><span class="delete-indicator htmx-indicator">Deleting...</span>`;
+  item.innerHTML = `<span class="entry-display"><strong>${saved.title}:</strong> ${saved.body}</span><button class="favorite-btn" type="button" aria-label="Add to favorites">☆</button><button class="edit-btn" type="button">Edit</button><button class="delete-btn" hx-delete="/entries/${saved.id}" hx-target="closest li" hx-swap="outerHTML" hx-confirm="Delete this entry?" hx-indicator="closest li .delete-indicator">Delete</button><span class="delete-indicator htmx-indicator">Deleting...</span>`;
   list.append(item);
   htmx.process(item);
 

@@ -15,16 +15,23 @@
       </nav>
     </header>
     <main>
-      <form id="entry-form" class="flex flex-col gap-2 mb-6 sm:flex-row">
-        <input type="text" name="title" placeholder="Title" class="form-input">
-        <input type="text" name="body" placeholder="Body" class="form-input">
-        <button type="submit" class="bg-teal-700 text-white rounded px-4 py-2 hover:bg-teal-800">Add entry</button>
+      <p id="status-announcer" class="sr-only" aria-live="polite"></p>
+      <form id="entry-form">
+        <label for="entry-title" class="sr-only">Title</label>
+        <input type="text" id="entry-title" name="title" placeholder="Title">
+        <label for="entry-body" class="sr-only">Body</label>
+        <input type="text" id="entry-body" name="body" placeholder="Body">
+        <button type="submit">Add entry</button>
       </form>
-      <ul id="entries">
+      <ul id="entries" tabindex="-1">
         <% entries.forEach((entry) => { %>
           <li data-id="<%= entry.id %>" data-title="<%= entry.title %>" data-body="<%= entry.body %>" data-favorite="<%= entry.favorite %>">
             <span class="entry-display"><strong><%= entry.title %>:</strong> <%= entry.body %></span>
-            <button class="favorite-btn" type="button"><%= entry.favorite ? '★' : '☆' %></button>
+            <button
+              class="favorite-btn"
+              type="button"
+              aria-label="<%= entry.favorite ? 'Remove from favorites' : 'Add to favorites' %>"
+            ><%= entry.favorite ? '★' : '☆' %></button>
             <button class="edit-btn" type="button">Edit</button>
             <button
               class="delete-btn"
@@ -42,8 +49,10 @@
       <section class="classic-form">
         <h2>Classic form (no JavaScript)</h2>
         <form method="POST" action="/entries/classic">
-          <input type="text" name="title" placeholder="Title">
-          <input type="text" name="body" placeholder="Body">
+          <label for="classic-title" class="sr-only">Title</label>
+          <input type="text" id="classic-title" name="title" placeholder="Title">
+          <label for="classic-body" class="sr-only">Body</label>
+          <input type="text" id="classic-body" name="body" placeholder="Body">
           <button type="submit">Add entry the classic way</button>
         </form>
       </section>
