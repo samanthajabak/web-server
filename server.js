@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 import authRouter from './routes/auth.js';
 import { attachUser } from './middleware/attachUser.js';
+import adminEntriesRouter from './routes/adminEntries.js';
 
 await mongoose.connect(
   process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/devdb'
@@ -30,6 +31,7 @@ app.use(morgan('dev'));
 app.use(cookieParser(SESSION_SECRET));
 app.use(attachUser);
 app.use(authRouter);
+app.use('/admin', adminEntriesRouter);
 
 app.get('/', (req, res) => {
   res.status(200).send('Hello, web!');
