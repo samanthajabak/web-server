@@ -2,12 +2,16 @@ import express from 'express';
 import morgan from 'morgan';
 import entriesRouter from './routes/entries.js';
 import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser';
+import authRouter from './routes/auth.js';
+import { attachUser } from './middleware/attachUser.js';
 
 await mongoose.connect(
   process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/devdb'
 );
 
 const app = express();
+const SESSION_SECRET = process.env.SESSION_SECRET || 'dev-secret-change-in-production';
 const PORT = process.env.PORT || 3000;
 
 app.set('view engine', 'ejs');
@@ -23,6 +27,9 @@ app.use((req, res, next) => {
 });
 
 app.use(morgan('dev'));
+app.use(cookieParser(SESSION_SECRET));
+app.use(attachUser);
+app.use(authRouter);
 
 app.get('/', (req, res) => {
   res.status(200).send('Hello, web!');
